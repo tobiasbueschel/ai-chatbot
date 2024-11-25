@@ -35,7 +35,8 @@ type AllowedTools =
   | 'createDocument'
   | 'updateDocument'
   | 'requestSuggestions'
-  | 'getWeather';
+  | 'getWeather'
+  | 'getLocation';
 
 const blocksTools: AllowedTools[] = [
   'createDocument',
@@ -45,7 +46,7 @@ const blocksTools: AllowedTools[] = [
 
 const weatherTools: AllowedTools[] = ['getWeather'];
 
-const allTools: AllowedTools[] = [...blocksTools, ...weatherTools];
+const allTools: AllowedTools[] = [...blocksTools, ...weatherTools, 'getLocation'];
 
 export async function POST(request: Request) {
   const {
@@ -96,6 +97,11 @@ export async function POST(request: Request) {
     maxSteps: 5,
     experimental_activeTools: allTools,
     tools: {
+      // client-side tool that is automatically executed on the client:
+      getLocation: {
+        description: 'Get the user location.',
+        parameters: z.object({}),
+      },
       getWeather: {
         description: 'Get the current weather at a location',
         parameters: z.object({

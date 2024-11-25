@@ -37,13 +37,34 @@ export function Chat({
     setInput,
     append,
     isLoading,
+    addToolResult,
     stop,
     data: streamingData,
   } = useChat({
     body: { id, modelId: selectedModelId },
     initialMessages,
+    maxSteps: 5,
     onFinish: () => {
       mutate('/api/history');
+    },
+    async onToolCall({ toolCall }) {
+      if (toolCall.toolName === 'getLocation') {
+        const cities = [
+          'New York',
+          'Los Angeles',
+          'Chicago',
+          'San Francisco',
+        ];
+
+        const result = cities[Math.floor(Math.random() * cities.length)];
+
+        addToolResult({
+          toolCallId: toolCall.toolCallId,
+          result,
+        });
+
+        return result;
+      }
     },
   });
 
